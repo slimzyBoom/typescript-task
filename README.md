@@ -16,13 +16,6 @@ The script can identify and validate the following card types:
 - Discover
 - Diners Club
 - JCB
-
-## Usage
-
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/yourusername/credit-card-validator.git
-   ```
    
 ## Functions
 
