@@ -12,20 +12,20 @@ type Admin = {
 
 type Person = User | Admin;
 
-type FilterCriteria<T> = Partial<Omit<T, "type">>;
+type FilterCriteria<T extends Person> = Partial<Omit<T, "type">>;
 
-function filterPersons<T extends "user" | "admin">(
+function filterPersons<T extends Person>(
   persons: Person[],
-  personType: T,
-  criteria: FilterCriteria<T extends "user" ? User : Admin>,
-): T extends "user" ? User[] : Admin[] {
+  personType: T["type"],
+  criteria: FilterCriteria<T>,
+): T[] {
   return persons.filter(
-    (person): person is T extends "user" ? User : Admin =>
+    (person): person is T =>
       person.type === personType &&
-      Object.entries(criteria).every(
-        ([key, value]) => (person as any)[key] === value,
-      ),
-  ) as any;
+      Object.entries(criteria).every(([key, value]) => 
+        (person as any)[key] === value
+      )
+  ) as T[];
 }
 
 // Example usage:
@@ -35,7 +35,8 @@ const persons: Person[] = [
   { type: "user", name: "Charlie", age: 30 },
 ];
 
-const users = filterPersons(persons, "user", { age: 25 }); // Should return User[]
-const admins = filterPersons(persons, "admin", { role: "superadmin" }); // Should return Admin[]
-console.log(`Users: ${JSON.stringify(users, null, 2)}`)
-console.log(`Admins: ${JSON.stringify(admins, null, 2)}`)
+const users = filterPersons(persons, "user", { age: 25 }); // User[]
+const admins = filterPersons(persons, "admin", { role: "superadmin" }); // Admin[]
+
+console.log("Users:", users);
+console.log("Admins:", admins);
